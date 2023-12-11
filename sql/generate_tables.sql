@@ -1,3 +1,4 @@
+# TODO: integrate to project for release as a physician foreign key
 #CREATE TABLE IF NOT EXISTS consultorio.specialties (
 #  id int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
 #  title varchar(45) NOT NULL,
