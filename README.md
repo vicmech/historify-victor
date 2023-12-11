@@ -1,5 +1,4 @@
 # Historify - Control de Historial Clínico
----
 Requerimientos del proyecto:
 - MySQL 8.2 o superior
 - Node.js 21.2.0 o superior
@@ -14,7 +13,7 @@ Dependencias:
 ## Correr el proyecto
 Para correr el proyecto, clonar el repositorio con:
 ```git
-git clone 
+git clone https://github.com/maruseron/historify.git
 ```
 Una vez clonado, se instalan las dependencias del proyecto con npm:
 ```npm
