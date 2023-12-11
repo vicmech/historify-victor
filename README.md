@@ -19,7 +19,7 @@ Una vez clonado, se instalan las dependencias del proyecto con npm:
 ```npm
 npm install
 ```
-Antes de correr el proyecto, se debe crear un archivo TypeScript llamado config.ts en la ruta del proyecto, del que consume el contexto de la base de datos. Debe lucir de forma similar a:
+Antes de correr el proyecto, se debe crear/modificar un archivo TypeScript llamado config.ts en la ruta del proyecto, del que consume el contexto de la base de datos. Debe lucir de forma similar al ejemplo de abajo, con sus respectivas credenciales personales:
 ```typescript
 export const config = {
     database: 'consultorio',
