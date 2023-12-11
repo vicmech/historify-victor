@@ -1,5 +1,5 @@
 export const config = {
-    database: 'consultorio',
+    database: 'historify',
     host: 'localhost',
     user: 'root',
     password: 'root',
