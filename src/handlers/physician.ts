@@ -6,74 +6,88 @@ import { Physician } from "../types.js";
 
 export async function searchPhysicianForm(_: Request, res: Response): Promise<void> {
     res.send(`
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historify - Control de historial clínico</title>
-</head>
-<script>
-    function submitFunction() {
-
-        let searchText = document.getElementById("registration").value.trim();
-        let form = document.getElementById("form");
-  
-        if(searchText.length > 0) {
-            form.action = "/physician/update/" + searchText;
-            form.submit();
-        } else {
-            return false;
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Historify - Control de historial clínico</title>
+        <link rel="stylesheet" href="../globals.css" type="text/css">
+    </head>
+    <script>
+        function submitFunction() {
+    
+            let searchText = document.getElementById("registration").value.trim();
+            let form = document.getElementById("form");
+      
+            if(searchText.length > 0) {
+                form.action = "/physician/update/" + searchText;
+                form.submit();
+            } else {
+                return false;
+            }
         }
-    }
-</script>
-<body>
-    <h2>Actualizar Doctor</h2>
-    <form id="form" action="" method="get" onsubmit="return submitFunction();">
-        <label for="registration">Matrícula</label><br>
-        <input type="text" id="registration"><br>
-        <hr/><br/>
-        <input type="submit" value="Buscar">
-    </form>
-</body>
-</html>
+    </script>
+    <body>
+        <h2 class="pg--title">Actualizar Doctor</h2>
+        <form class="form" id="form" action="" method="get" onsubmit="return submitFunction();">
+        <div class="input--box">     
+            <label class="form--label" for="registration">Matrícula</label>
+            <input class="form--input" type="text" id="registration">
+        </div>
+            <input class="submit--btn" type="submit" value="Buscar">
+        </form>
+    </body>
+    </html>
     `);
 }
 
 export async function createPhysicianForm(_: Request, res: Response): Promise<void> {
     res.send(`
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historify - Control de historial clínico</title>
-</head>
-<body>
-    <h2>Doctor</h2>
-    <form action="" method="post">
-        <p>Ingrese los datos del doctor:</p>
-        <label for="registration">Matrícula</label><br>
-        <input type="text" name="registration" id="registration"><br>
-        <label for="gender">Género</label><br>
-        <select name="gender" id="gender">
-            <option value="M">Hombre</option>
-            <option value="F">Mujer</option>
-            <option value="X">Otro</option>
-        </select><br>
-        <label for="birth">Fecha de nacimiento</label><br>
-        <input type="date" name="birth" id="birth"><br>
-        <label for="fname">Nombre</label><br>
-        <input type="text" name="fname" id="fname"><br>
-        <label for="lname">Apellido</label><br>
-        <input type="text" name="lname" id="lname"><br>
-        <label for="specialty">Especialidad</label><br>
-        <input type="text" name="specialty" id="specialty"><br>
-        <hr/><br/>
-        <input type="submit" value="Enviar">
-    </form>
-</body>
-</html>
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Historify - Control de historial clínico</title>
+        <link rel="stylesheet" href="../globals.css" type="text/css">
+    </head>
+    <body>
+        <h2 class="pg--title">Doctor</h2>
+        <form class="form" action="" method="post">
+            <p class="form--title">Ingrese los datos del doctor:</p>
+            <div class="input--box">
+                <label class="form--label" for="registration">Matrícula</label>
+                <input class="form--input" type="text" name="registration" id="registration">
+            </div>
+            <div class="input--box">
+                <label class="form--label" for="gender">Género</label>
+                <select name="gender" id="gender" class="form--input">
+                    <option value="M">Hombre</option>
+                    <option value="F">Mujer</option>
+                    <option value="X">Otro</option>
+                </select>
+            </div>
+            <div class="input--box">
+                <label class="form--label" for="birth">Fecha de nacimiento</label>
+                <input class="form--input" type="date" name="birth" id="birth">
+            </div>
+            <div class="input--box">
+                <label class="form--label" for="fname">Nombre</label>
+                <input class="form--input" type="text" name="fname" id="fname">
+            </div>
+            <div class="input--box">
+                <label class="form--label" for="lname">Apellido</label>
+                <input class="form--input" type="text" name="lname" id="lname">
+            </div>
+            <div class="input--box">
+                <label class="form--label" for="specialty">Especialidad</label>
+            <input class="form--input" type="text" name="specialty" id="specialty">
+            </div>
+            <input class="submit--btn" type="submit" value="Enviar">
+        </form>
+    </body>
+    </html>
     `);
 }
 
@@ -103,39 +117,59 @@ export async function updatePhysicianForm(req: Request, res: Response): Promise<
     }
     const birth_string = result.birth.getFullYear() + "-" + (result.birth.getMonth() + 1) + "-" + result.birth.getDate();
     res.send(`
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historify - Control de historial clínico</title>
-</head>
-<body>
-    <h2>Doctor</h2>
-    <form action="" method="post">
-        <input type="hidden" name="id" value="${result.id}" />
-        <p>Ingrese los datos del doctor:</p>
-        <label for="registration">Matrícula</label><br>
-        <input type="text" name="registration" id="registration" value="${result.registration}"><br>
-        <label for="gender">Género</label><br>
-        <select name="gender" id="gender">
-            <option value="M" ${result.gender === "M" ? "selected" : ""}>Hombre</option>
-            <option value="F" ${result.gender === "F" ? "selected" : ""}>Mujer</option>
-            <option value="X" ${result.gender === "X" ? "selected" : ""}>Otro</option>
-        </select><br>
-        <label for="birth">Fecha de nacimiento</label><br>
-        <input type="date" name="birth" id="birth" value="${birth_string}"><br>
-        <label for="fname">Nombre</label><br>
-        <input type="text" name="fname" id="fname" value="${result.fname}"><br>
-        <label for="lname">Apellido</label><br>
-        <input type="text" name="lname" id="lname" value="${result.lname}"><br>
-        <label for="specialty">Especialidad</label><br>
-        <input type="text" name="specialty" id="specialty" value="${result.specialty}"><br>
-        <hr/><br/>
-        <input type="submit" value="Actualizar" formaction="/physician/update" />
-    </form>
-</body>
-</html>
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Historify - Control de historial clínico</title>
+        <link rel="stylesheet" href="../../globals.css" type="text/css">
+    </head>
+    <body>
+        <h2 class="pg--title">Doctor</h2>
+        <form class="form" action="" method="post">
+            <input type="hidden" name="id" value="${result.id}" />
+            <p class="form--title">Ingrese los datos del doctor:</p>
+    
+            <div class="input--box">
+                <label for="registration" class="form--label">Matrícula</label>
+                <input type="text" name="registration" class="form--input" id="registration" value="${result.registration}">
+            </div>
+            
+            <div class="input--box">
+                <label for="gender" class="form--label">Género</label>
+            <select name="gender" class="form--input" id="gender">
+                <option value="M" ${result.gender === "M" ? "selected" : ""}>Hombre</option>
+                <option value="F" ${result.gender === "F" ? "selected" : ""}>Mujer</option>
+                <option value="X" ${result.gender === "X" ? "selected" : ""}>Otro</option>
+            </select>
+            </div>
+            
+            <div class="input--box">
+                <label for="birth" class="form--label">Fecha de nacimiento</label>
+                <input type="date" name="birth" class="form--input" id="birth" value="${birth_string}">
+            </div>
+            
+            <div class="input--box">
+                <label for="fname" class="form--label">Nombre</label>
+            <input type="text" name="fname" class="form--input" id="fname" value="${result.fname}">
+            </div>
+            
+            <div class="input--box">
+                <label for="lname" class="form--label">Apellido</label>
+                <input type="text" name="lname" class="form--input" id="lname" value="${result.lname}">
+            </div>
+    
+            <div class="input--box">
+                <label for="specialty" class="form--label">Especialidad</label>
+                <input type="text" name="specialty" class="form--input" id="specialty" value="${result.specialty}">
+            </div>
+    
+            <hr/><br/>
+            <input type="submit" value="Actualizar" formaction="/physician/update" class="submit--btn" />
+        </form>
+    </body>
+    </html>
     `);
 }
 

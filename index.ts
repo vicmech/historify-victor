@@ -17,6 +17,7 @@ function main(): void {
     // MIDDLEWARE
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
+    app.use(express.static('public'));
     app.param('id', (req, _1, next, id: string) => { (req as any).id = id; next(); });
 
     // INDEX

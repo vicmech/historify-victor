@@ -5,6 +5,8 @@
 #  KEY title_idx (title)
 #) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE DATABASE IF NOT EXISTS historify;
+
 CREATE TABLE IF NOT EXISTS historify.physicians (
   id int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
   fname varchar(100) NOT NULL,
