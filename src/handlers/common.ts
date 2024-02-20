@@ -8,7 +8,7 @@ export function invalidBody(res: Response): void {
     res.status(400).send("Invalid body");
 }
 
-export function welcome(_: Request, res: Response): void {
+export function dashboard(_: Request, res: Response): void {
     res.send(`
     <!DOCTYPE html>
     <html lang="en">
@@ -24,7 +24,7 @@ export function welcome(_: Request, res: Response): void {
                 <h1>HISTORIFY</h1>
             </div>
             <div class="super-section-separator">
-    
+
                 <!--Pacientes-->
                 <div class="section-separator section-container">
                     <div class="section-separator title-container">

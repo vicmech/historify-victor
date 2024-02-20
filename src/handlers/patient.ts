@@ -140,6 +140,7 @@ export async function updatePatientForm(req: Request, res: Response): Promise<vo
     } catch (err) {
         return unknownServerError(res, err);
     }
+
     const birth_string = result.birth.getFullYear() + "-" 
                        + (result.birth.getMonth() + 1) + "-" 
                        + result.birth.getDate();

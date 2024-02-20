@@ -5,6 +5,7 @@ export interface Database {
     physicians:    PhysicianTable
     patients:      PatientTable
     consultations: ConsultationTable
+    users:         UserTable
 }
 
 export interface SpecialtyTable {
@@ -61,3 +62,14 @@ export interface ConsultationTable {
 export type Consultation       = Selectable<ConsultationTable>
 export type NewConsultation    = Insertable<ConsultationTable>
 export type ConsultationUpdate = Updateable<ConsultationTable>
+
+export interface UserTable {
+    id: Generated<number>
+    username: string
+    passw: string
+    is_root: boolean
+}
+
+export type User       = Selectable<UserTable>
+export type NewUser    = Insertable<UserTable>
+export type UserUpdate = Updateable<UserTable>

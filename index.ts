@@ -8,12 +8,14 @@ import { createPhysician, createPhysicianForm,
 import { createConsultation, createConsultationForm, 
          searchConsultationForm, 
          updateConsultation, updateConsultationForm } from "./src/handlers/consultation.js"
-import { welcome } from "./src/handlers/common.js"
+import { dashboard } from "./src/handlers/common.js"
 import express from "express"
+import { logUser, loginForm } from "./src/handlers/user.js"
 
 function main(): void {
     const app = Express();
     const port = 3000;
+
     // MIDDLEWARE
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
@@ -21,8 +23,14 @@ function main(): void {
     app.param('id', (req, _1, next, id: string) => { (req as any).id = id; next(); });
 
     // INDEX
-    app.get('/', welcome);
+    app.get('/dashboard', dashboard);
 
+    // LOGIN
+    app.get('/',    loginForm);  // html: formulario de inicio de sesión
+    app.get('/:id', loginForm);  // html: formulario de inicio de sesión (reintento)
+    app.post('/',    logUser);   // validación de usuario y redirección (dashboard o de vuelta a login)
+
+    
     // CONSULTATION
     // app.get('/consultation/:id', getOneConsultation);      // futuro: html: vista de 1 consulta
     // app.get('/consultation',     getAllConsultations);     // futuro: html: vista de lista de consultas
@@ -31,8 +39,8 @@ function main(): void {
     app.post('/consultation/create', createConsultation);     // acción de registro
 
     app.get('/consultation/update/', searchConsultationForm);
-    app.get('/consultation/update/:id',  updateConsultationForm);  // html: formulario de actualización de consulta
-    app.post('/consultation/update/',  updateConsultation);      // acción de actualización
+    app.get('/consultation/update/:id', updateConsultationForm);  // html: formulario de actualización de consulta
+    app.post('/consultation/update/',   updateConsultation);      // acción de actualización
 
     // PHYSICIAN
     // app.get('/physician/:id', getOnePhysician);            // futuro: html: vista de 1 doctor
@@ -41,9 +49,9 @@ function main(): void {
     app.get('/physician/create/',  createPhysicianForm);       // html: formulario de registro de doctor
     app.post('/physician/create/', createPhysician)            // acción de registro de doctor
 
-    app.get('/physician/update/',    searchPhysicianForm);
+    app.get('/physician/update/',   searchPhysicianForm);
     app.get('/physician/update/:id', updatePhysicianForm);    // html: formulario de actualización de consulta
-    app.post('/physician/update/',     updatePhysician)         // acción de actualización
+    app.post('/physician/update/',   updatePhysician)         // acción de actualización
 
     // PATIENT
     // app.get('/patient/:id', getOnePatient);                // futuro: html: vista de 1 paciente

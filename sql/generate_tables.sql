@@ -45,3 +45,10 @@ CREATE TABLE IF NOT EXISTS historify.consultations (
   FOREIGN KEY (physician_id) REFERENCES historify.physicians (id),
   FOREIGN KEY (patient_id) REFERENCES historify.patients (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS historify.users (
+	id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    username varchar(255) NOT NULL,
+    passw varchar(255) NOT NULL,
+    is_root boolean NOT NULL
+)

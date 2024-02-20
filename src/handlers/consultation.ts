@@ -20,7 +20,7 @@ export async function searchConsultationForm(_: Request, res: Response): Promise
             let searchText = document.getElementById("id").value.trim();
             let form = document.getElementById("form");
       
-            if(searchText.length > 0) {
+            if (searchText.length > 0) {
                 form.action = "/consultation/update/" + searchText;
                 form.submit();
             } else {
@@ -53,7 +53,7 @@ export async function createConsultationForm(_: Request, res: Response): Promise
         <title>Historify - Control de historial clínico</title>
         <link rel="stylesheet" href="../globals.css" type="text/css">
     </head>
-    
+
     <body>
         <h2 class="pg--title">Consulta</h2>
         <form class="form" action="" method="post">
