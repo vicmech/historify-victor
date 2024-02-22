@@ -1,64 +1,85 @@
 import { Request, Response } from "express"
-import { invalidBody, unknownServerError } from "./common.js"
 import { db } from "../context.js";
-import { User } from "../types.js";
+import { isNewUser } from "../validation/user.js";
+import { invalidBody, unknownServerError } from "./common.js";
 
-export async function loginForm(req: Request, res: Response): Promise<void> {
-    let isRetrying: boolean = (req as any).id === "true";
-    console.log("in login form with failed login: " + isRetrying);
-
+/*export async function searchUserForm(_: Request, res: Response): Promise<void> {
     res.send(`
     <!DOCTYPE html>
-    <html>
-        <head>
-            <meta charset="utf-8">
-            <meta http-equiv="X-UA-Compatible" content="IE=edge">
-            <title></title>
-            <meta name="description" content="">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <link rel="stylesheet" href="../login.css" type="text/css">
-        </head>
-        <body>
-            <form action="/" method="post">
-                <h2>HISTORIFY</h2>
-                <div>${isRetrying ? "failed login" : ""}</div>
-                <div class="input--container">
-                    <label for="user">USERNAME:</label>
-                    <input type="text" id="user" name="username"/>
-                </div>
-                <div class="input--container">
-                    <label for="password">PASSWORD:</label>
-                    <input type="password" id="password" name="password"/>
-                </div>
-                <input class="submit--btn" type="submit" value="Enviar">
-            </form>
-        </body>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Historify - Control de historial clínico</title>
+        <link rel="stylesheet" href="../globals.css" type="text/css">
+    </head>
+    <script>
+        function submitFunction() {
+    
+            let searchText = document.getElementById("username").value.trim();
+            let form = document.getElementById("form");
+      
+            if(searchText.length > 0) {
+                form.action = "/User/update/" + searchText;
+                form.submit();
+            } else {
+                return false;
+            }
+        }
+    </script>
+    <body>
+        <h2 class="pg--title">Actualizar Usuario</h2>
+        <form class="form" id="form" action="" method="get" onsubmit="return submitFunction();">
+        <div class="input--box">     
+            <label class="form--label" for="username">Nombre de usuario</label>
+            <input class="form--input" type="text" id="username">
+        </div>
+            <input class="submit--btn" type="submit" value="Buscar">
+        </form>
+    </body>
+    </html>
+    `);
+}*/
+
+export async function createUserForm(_: Request, res: Response): Promise<void> {
+    res.send(`
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Historify - Control de historial clínico</title>
+        <link rel="stylesheet" href="../globals.css" type="text/css">
+    </head>
+    <body>
+        <h2 class="pg--title">Usuario</h2>
+        <form class="form" action="" method="post">
+            <p class="form--title">Ingrese los datos del usuario:</p>
+            <div class="input--box">
+                <label class="form--label" for="username">Nombre de usuario</label>
+                <input class="form--input" type="text" name="username" id="username">
+            </div>
+            <div class="input--box">
+                <label class="form--label" for="password">Contraseña</label>
+                <input class="form--input" type="password" name="passw" id="passw">
+            </div>
+            <input class="submit--btn" type="submit" value="Enviar">
+        </form>
+    </body>
     </html>
     `);
 }
 
-export async function logUser(req: Request, res: Response): Promise<void> {
-    if (!isValidLogObject(req.body)) return invalidBody(res);
-
-    let user: User;
+export async function createUser(req: Request, res: Response): Promise<void> {
+    console.log(req.body);
+    if (!isNewUser(req.body)) return invalidBody(res);
     try {
-        user = await db.selectFrom("users")
-            .selectAll()
-            .where("username", "=", req.body.username)
+        const result = await db.insertInto('users')
+            .values({ ...req.body, is_root: false })
             .executeTakeFirstOrThrow();
+        
+        res.status(201).send("Created User " + req.body.username + " with ID " + result.insertId);
     } catch (err) {
-        // user no existe, probablemente
         return unknownServerError(res, err);
     }
-
-    if (req.body.password === user.passw) {
-        res.redirect('/dashboard');
-    } else {
-        res.redirect('/true');
-    }
-}
-
-function isValidLogObject(obj: any): obj is { username: string; password: string } {
-    return typeof obj.username == "string"
-        && typeof obj.password == "string";
 }
