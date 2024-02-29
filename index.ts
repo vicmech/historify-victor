@@ -1,5 +1,5 @@
 import Express from "express"
-import { createPatient, createPatientForm, 
+import { createPatient, createPatientForm,
          searchPatientForm, 
          updatePatient, updatePatientForm } from "./src/handlers/patient.js"
 import { createPhysician, createPhysicianForm, 
@@ -7,17 +7,22 @@ import { createPhysician, createPhysicianForm,
          updatePhysician, updatePhysicianForm } from "./src/handlers/physician.js"
 import { createConsultation, createConsultationForm, 
          searchConsultationForm, 
-         updateConsultation, updateConsultationForm } from "./src/handlers/consultation.js"
+         updateConsultation, updateConsultationForm, getDoctorConsultations } from "./src/handlers/consultation.js"
 import { dashboard } from "./src/handlers/common.js"
 import express from "express"
 import { logOut, logUser, loginForm } from "./src/handlers/login.js"
 import { createUser, createUserForm } from "./src/handlers/user.js"
 import cookieParser from "cookie-parser";
 import { superuser } from "./src/handlers/superuser.js"
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 function main(): void {
     const app = Express();
     const port = 3000;
+
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename)
 
     // MIDDLEWARE
     app.use(cookieParser());
@@ -26,9 +31,13 @@ function main(): void {
     app.use(express.static('public'));
     app.param('id', (req, _1, next, id: string) => { (req as any).id = id; next(); });
 
+    app.set('views', __dirname + '/views/pages') // specify the views directory
+    app.set('view engine', 'ejs'); 
+
     // INDEX
     app.get('/dashboard', dashboard);
     app.get('/dashboard/logout', logOut);  // redirect: limpia la cookie de auth
+    app.post('/dashboard/', dashboard); //Re-renders dashboard to update the consultation table
 
     app.get('/superuser', superuser);
     app.get('/superuser/logout', logOut);
@@ -45,6 +54,7 @@ function main(): void {
     app.get('/consultation/create',  createConsultationForm); // html: formulario de registro de consulta
     app.post('/consultation/create', createConsultation);     // acción de registro
 
+    app.get('/consultation/getList/:id', getDoctorConsultations);
     app.get('/consultation/update/', searchConsultationForm);
     app.get('/consultation/update/:id', updateConsultationForm);  // html: formulario de actualización de consulta
     app.post('/consultation/update/',   updateConsultation);      // acción de actualización

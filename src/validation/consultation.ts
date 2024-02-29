@@ -12,6 +12,7 @@ export function isNewConsultation(obj: any): obj is NewConsultation & {
 }
 
 export function isConsultationUpdate(obj: any): obj is ConsultationUpdate & { hour: string} {
+    console.log(obj);
     return typeof obj.consultation_date == "string"
         && typeof obj.consultation_desc == "string"
         && typeof obj.patient_id == "string"

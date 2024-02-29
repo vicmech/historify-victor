@@ -43,47 +43,7 @@ export async function searchConsultationForm(_: Request, res: Response): Promise
 }
 
 export async function createConsultationForm(_: Request, res: Response): Promise<void> {
-    res.send(`
-    <!DOCTYPE html>
-    <html lang="es">
-    
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Historify - Control de historial clínico</title>
-        <link rel="stylesheet" href="../globals.css" type="text/css">
-    </head>
-
-    <body>
-        <h2 class="pg--title">Consulta</h2>
-        <form class="form" action="" method="post">
-            <h3 class="form--title">Ingrese los datos de la consulta</h3>
-            <div class="input--box"> 
-                <label class="form--label" name="consultation_date">Fecha</label>
-                <input class="form--input" type="date" name="consultation_date" id="consultation_date">
-            </div>
-            <div class="input--box">
-                <label class="form--label" for="hour">Hora</label>
-                <input class="form--input" type="time" name="hour" id="hour" />
-            </div>
-            <div class="input--box">
-                <label class="form--label" for="consultation_desc">Descripción de la consulta</label>
-                <input class="form--input" type="text" name="consultation_desc" id="consultation_desc">
-            </div>
-            <div class="input--box">
-                <label class="form--label" for="patient_id_document">Cédula del paciente</label>
-                <input class="form--input" type="text" name="patient_id_document" id="patient_id_document">
-            </div>
-            <div class="input--box">
-                <label class="form--label" for="physician_registration">Matrícula del doctor</label>
-                <input class="form--input" type="text" name="physician_registration" id="physician_registration">
-            </div>
-            <input class="submit--btn" type="submit" value="Enviar">
-        </form>
-    </body>
-    
-    </html>
-    `);
+    res.render('consultationCreateForm');
 }
 
 export async function createConsultation(req: Request, res: Response): Promise<void> {
@@ -93,24 +53,59 @@ export async function createConsultation(req: Request, res: Response): Promise<v
             .select('id')
             .where("id_document", "=", req.body.patient_id_document)
             .executeTakeFirstOrThrow()).id;
+            console.log('paciente');
         const physician_id = (await db.selectFrom('physicians')
             .select('id')
             .where("registration", "=", req.body.physician_registration)
             .executeTakeFirstOrThrow()).id;
+            console.log('doctor');
         const values = {
             consultation_date: req.body.consultation_date + " " + req.body.hour + ":00",
             consultation_desc: req.body.consultation_desc,
             patient_id,
-            physician_id
+            physician_id,
+            status : 'PENDING'
         };
         const result = await db.insertInto('consultations')
             .values(values)
             .executeTakeFirstOrThrow();
-        
-        res.status(201).send("Created consultation with ID " + result.insertId);
+        console.log(result);
+        res.status(201).render('successTransaccion',{
+            registerType : 'Consulta',
+            action : 'creada'
+        }
+        );
     } catch (err) {
         return unknownServerError(res, err);
     }
+}
+
+/*export async function getDoctorConsultations(req:Request, res : Response): Promise<void>{
+    const Doctor_id: number = Number((req as any).body.id);
+    let result : Consultation[]
+    try {
+        result = await db.selectFrom("consultations")
+            .selectAll()
+            .where("physician_id", "=", Doctor_id)
+    } catch (err) {
+        return unknownServerError(res, err);
+    }
+
+    res.render('consultationUpdate');
+}*/
+
+export async function getDoctorConsultations(_ : Request, res : Response) : Promise<void>{
+    let consultations : Consultation[];
+    try {
+        consultations = await db.selectFrom("consultations")
+            .selectAll()
+            .where("physician_id", "=", 1)
+            .execute();
+            console.log(consultations);
+    } catch (err) {
+        console.log(err);
+    }
+    res.render('consultationUpdate');
 }
 
 export async function updateConsultationForm(req: Request, res: Response): Promise<void> {
@@ -121,15 +116,25 @@ export async function updateConsultationForm(req: Request, res: Response): Promi
             .selectAll()
             .where("id", "=", id)
             .executeTakeFirstOrThrow();
+            const consultation_date_string = (result.consultation_date.getFullYear() + "-"
+                                           + String(result.consultation_date.getMonth() + 1).padStart(2,'0') + "-"
+                                           + result.consultation_date.getDate().toString().padStart(2,'0'));
+            const consultation_hour_string = (result.consultation_date.getHours() + ":"
+                                           + result.consultation_date.getMinutes() + ":00").toString();
+                    
+            console.log(consultation_date_string);
+            res.render('consultationUpdate', {
+                consultation : result,
+                consultation_date_string : consultation_date_string,
+                consultation_hour_string: consultation_hour_string
+            });
     } catch (err) {
         return unknownServerError(res, err);
     }
-    const consultation_date_string = result.consultation_date.getFullYear() + "-"
-                                   + (result.consultation_date.getMonth() + 1) + "-"
-                                   + result.consultation_date.getDate();
-    const consultation_hour_string = result.consultation_date.getHours() + ":"
-                                   + result.consultation_date.getMinutes() + ":00";
-    res.send(`
+
+    console.log(result);
+    
+    /*res.send(`
     <!DOCTYPE html>
     <html lang="es">
     <head>
@@ -185,7 +190,7 @@ export async function updateConsultationForm(req: Request, res: Response): Promi
         </form>
     </body>
     </html>
-    `);
+    `);*/
 }
 
 export async function updateConsultation(req: Request, res: Response): Promise<void> {
@@ -200,11 +205,17 @@ export async function updateConsultation(req: Request, res: Response): Promise<v
             physician_id: req.body.physician_id
         };
         console.log(values);
-        const result = await db.updateTable('consultations')
-            .set(values)
-            .executeTakeFirstOrThrow();
+        if(req.body.id){
+            await db.updateTable('consultations')
+                .set(values)
+                .where('id', '=', req.body?.id)
+                .executeTakeFirstOrThrow();
+            res.status(201).render('successTransaccion',{
+                registerType : 'Consulta',
+                action : 'modificada'
+            });
+        }
 
-        res.status(200).send("Updated consultation " + req.body.id + ", changed " + result.numUpdatedRows + " rows.");
     } catch (err) {
         return unknownServerError(res, err);
     }

@@ -25,6 +25,7 @@ export interface PhysicianTable {
     birth: ColumnType<Date, string, string>
     registration: string
     specialty: string
+    userId : number
 }
 
 export type Physician       = Selectable<PhysicianTable>
@@ -54,9 +55,9 @@ export interface ConsultationTable {
     diagnosis: string | null
     observations: string | null
     register_date: Generated<ColumnType<Date, string, string>>
-
     patient_id: number
     physician_id: number
+    status : string
 }
 
 export type Consultation       = Selectable<ConsultationTable>
@@ -67,7 +68,7 @@ export interface UserTable {
     id: Generated<number>
     username: string
     passw: string
-    is_root: boolean
+    userType: Number
 }
 
 export type User       = Selectable<UserTable>

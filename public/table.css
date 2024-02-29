@@ -1,0 +1,67 @@
+:root {
+    --main-blue: #1479ff;
+    --second-blue: #E6F1FF;
+    --text-blue: #193B68;
+    --gray-text: #a8a8a8;
+}
+
+.super-section-separator{
+    width: 100%;
+}
+
+.table--container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%; 
+}
+
+.schedule-table{
+    background-color: var(--second-blue);
+    box-shadow: 0px 0px 26px -11px rgba(0,0,0,0.4);
+    border-radius: 10px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.schedule-table-categories,
+.schedule-table-row{
+    display: flex;
+    flex-direction: row;
+    margin: 1vh;
+    text-align: center;
+}
+
+.schedule-table-categories{
+    background-color: #1479ff;
+    border-radius: 8px;
+    color: var(--second-blue);
+}
+
+.row--element,
+.schedule-table-categories-cell{
+    margin: 1vh;
+    width: 15%;
+    align-items: center;
+}
+
+.schedule-table-cell span{
+    font-size: 80%;
+}
+
+.search{
+    text-align: end;
+    margin-bottom: 0;
+    padding: 0;
+}
+
+.search--input{
+    padding: 0.5vh 1.8vh;
+    border-radius: 7px;
+    outline: none;
+    border: 1px solid var(--text-blue);
+    font-size: 0.8em;
+}

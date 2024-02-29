@@ -75,7 +75,7 @@ export async function createUser(req: Request, res: Response): Promise<void> {
     if (!isNewUser(req.body)) return invalidBody(res);
     try {
         const result = await db.insertInto('users')
-            .values({ ...req.body, is_root: false })
+            .values({ ...req.body, userType: 1 })
             .executeTakeFirstOrThrow();
         
         res.status(201).send("Created User " + req.body.username + " with ID " + result.insertId);

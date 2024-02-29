@@ -43,52 +43,7 @@ export async function searchPhysicianForm(_: Request, res: Response): Promise<vo
 }
 
 export async function createPhysicianForm(_: Request, res: Response): Promise<void> {
-    res.send(`
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Historify - Control de historial clínico</title>
-        <link rel="stylesheet" href="../globals.css" type="text/css">
-    </head>
-    <body>
-        <h2 class="pg--title">Doctor</h2>
-        <form class="form" action="" method="post">
-            <p class="form--title">Ingrese los datos del doctor:</p>
-            <div class="input--box">
-                <label class="form--label" for="registration">Matrícula</label>
-                <input class="form--input" type="text" name="registration" id="registration">
-            </div>
-            <div class="input--box">
-                <label class="form--label" for="gender">Género</label>
-                <select name="gender" id="gender" class="form--input">
-                    <option value="M">Hombre</option>
-                    <option value="F">Mujer</option>
-                    <option value="X">Otro</option>
-                </select>
-            </div>
-            <div class="input--box">
-                <label class="form--label" for="birth">Fecha de nacimiento</label>
-                <input class="form--input" type="date" name="birth" id="birth">
-            </div>
-            <div class="input--box">
-                <label class="form--label" for="fname">Nombre</label>
-                <input class="form--input" type="text" name="fname" id="fname">
-            </div>
-            <div class="input--box">
-                <label class="form--label" for="lname">Apellido</label>
-                <input class="form--input" type="text" name="lname" id="lname">
-            </div>
-            <div class="input--box">
-                <label class="form--label" for="specialty">Especialidad</label>
-            <input class="form--input" type="text" name="specialty" id="specialty">
-            </div>
-            <input class="submit--btn" type="submit" value="Enviar">
-        </form>
-    </body>
-    </html>
-    `);
+    res.render('physicianCreateForm');
 }
 
 export async function createPhysician(req: Request, res: Response): Promise<void> {
@@ -97,8 +52,11 @@ export async function createPhysician(req: Request, res: Response): Promise<void
         const result = await db.insertInto('physicians')
             .values(req.body)
             .executeTakeFirstOrThrow();
-        
-        res.status(201).send("Created physician " + req.body.fname + " with ID " + result.insertId);
+            console.log(result);
+        res.status(201).render('successTransaccion',{
+            registerType : 'Medico',
+            action : 'creado'
+        })
     } catch (err) {
         return unknownServerError(res, err);
     }
@@ -107,6 +65,7 @@ export async function createPhysician(req: Request, res: Response): Promise<void
 export async function updatePhysicianForm(req: Request, res: Response): Promise<void> {
     const registration: string = (req as any).id;
     let result: Physician;
+
     try {
         result = await db.selectFrom('physicians')
             .selectAll()
@@ -115,7 +74,13 @@ export async function updatePhysicianForm(req: Request, res: Response): Promise<
     } catch (err) {
         return unknownServerError(res, err);
     }
+
     const birth_string = result.birth.getFullYear() + "-" + (result.birth.getMonth() + 1) + "-" + result.birth.getDate();
+    res.render('physicianUpdateForm', {
+        result : result,
+        birth_string : birth_string,
+        action : 'updated'
+    })
     res.send(`
     <!DOCTYPE html>
     <html lang="es">
@@ -176,12 +141,15 @@ export async function updatePhysicianForm(req: Request, res: Response): Promise<
 export async function updatePhysician(req: Request, res: Response): Promise<void> {
     if (!isPhysicianUpdate(req.body)) return invalidBody(res);
     try {
-        const result = await db.updateTable('physicians')
+        await db.updateTable('physicians')
             .set({ ...req.body })
             .executeTakeFirstOrThrow();
 
-        res.status(200).send("Updated physician " + req.body.fname + ", changed " + result.numChangedRows + " rows.");
-    } catch (err) {
+        res.status(201).render('successTransaccion',{
+            registerType : 'Medico',
+            action : 'actualizado'
+        });
+        } catch (err) {
         return unknownServerError(res, err);
     }
 }

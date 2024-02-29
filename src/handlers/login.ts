@@ -6,14 +6,10 @@ import { User } from "../types.js";
 export async function loginForm(req: Request, res: Response): Promise<void> {
     let isRetrying: boolean = (req as any).id === "true";
 
-    if (req.cookies.auth === "true") {
-        if (req.cookies.root === "true") {
-            res.redirect('/superuser');
-        } else {
-            res.redirect('/dashboard');
-        }
+    /*if (req.cookies.auth === "true") {
+        res.redirect('/dashboard');
         return;
-    }
+    }*/
 
     res.send(`
     <!DOCTYPE html>
@@ -46,7 +42,7 @@ export async function loginForm(req: Request, res: Response): Promise<void> {
 }
 
 export async function logOut(_: Request, res: Response): Promise<void> {
-    res.clearCookie('root');
+    res.clearCookie('userType');
     res.clearCookie('auth');
     res.redirect('/');
 }
@@ -54,6 +50,7 @@ export async function logOut(_: Request, res: Response): Promise<void> {
 export async function logUser(req: Request, res: Response): Promise<void> {
     if (!isValidLogObject(req.body)) return invalidBody(res);
 
+        console.log(req.body.username);
     let user: User;
     try {
         user = await db.selectFrom("users")
@@ -66,13 +63,27 @@ export async function logUser(req: Request, res: Response): Promise<void> {
     }
 
     if (req.body.password === user.passw) {
-        if (user.is_root) {
+        /*if (user.is_root) {
             res.clearCookie('root');
-            res.cookie('root', 'true');
-        }
+            res.cookie('userType', user.userType.toString());
+
+        }*/
+
+        //reset cookie for userType
+        res.clearCookie('userType');
+        res.cookie('userType', user.userType);
+
+        //reset Auth cookie
         res.clearCookie('auth');
         res.cookie('auth', 'true');
+        
+        //reset userId Cookie
+        res.clearCookie('userId');
+        res.cookie('userId', user.id);
+
+        //redirect to the dasboard
         res.redirect('/dashboard');
+        console.log('done');
     } else {
         res.redirect('/true');
     }
